@@ -8,6 +8,7 @@ from ctxlens.analysis.profile import (
     TurnStat,
     build_profile,
 )
+from ctxlens.analysis.recommend import Recommendation, recommend
 from ctxlens.analysis.waste import WasteItem, WasteReport, build_waste_report
 
 __all__ = [
@@ -21,4 +22,6 @@ __all__ = [
     "WasteReport",
     "WasteItem",
     "build_waste_report",
+    "Recommendation",
+    "recommend",
 ]
