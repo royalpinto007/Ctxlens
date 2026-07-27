@@ -21,7 +21,7 @@ deps), and upgrades to exact counts automatically when `tiktoken` is installed.
 ## Quickstart
 
 ```bash
-pip install ctxlens          # core
+pip install ctxlens-cli          # core
 pip install "ctxlens[tiktoken]"   # optional exact token counts
 
 ctxlens analyze session.jsonl

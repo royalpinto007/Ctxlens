@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "ctxlens"
+name = "ctxlens-cli"
 version = "0.1.0"
 description = "A context-window profiler for AI agents: see exactly what is eating your context, flag waste, and cut tokens."
 readme = "README.md"
