@@ -25,23 +25,31 @@ class ClaudeCodeParser(Parser):
         raw = raw.strip()
         if not raw:
             return 0.0
-        first = raw.splitlines()[0].strip()
-        if not (first.startswith("{") and first.endswith("}")):
+        # a JSONL transcript has multiple JSON objects, one per line; scan the
+        # first few so a leading "summary" line doesn't hide the signal
+        best = 0.0
+        lines = [ln.strip() for ln in raw.splitlines() if ln.strip()]
+        if len(lines) < 2 and not raw.startswith("{"):
             return 0.0
-        try:
-            obj = json.loads(first)
-        except json.JSONDecodeError:
-            return 0.0
-        if not isinstance(obj, dict):
-            return 0.0
-        score = 0.0
-        # keys highly characteristic of Claude Code JSONL
-        for key in ("uuid", "parentUuid", "sessionId", "cwd"):
-            if key in obj:
-                score += 0.25
-        if obj.get("type") in {"user", "assistant", "system", "summary"} and "message" in obj:
-            score += 0.4
-        return min(score, 1.0)
+        for line in lines[:5]:
+            if not (line.startswith("{") and line.endswith("}")):
+                continue
+            try:
+                obj = json.loads(line)
+            except json.JSONDecodeError:
+                return 0.0
+            if not isinstance(obj, dict):
+                continue
+            score = 0.0
+            for key in ("uuid", "parentUuid", "sessionId", "cwd"):
+                if key in obj:
+                    score += 0.2
+            if obj.get("type") in {"user", "assistant", "system", "summary"} and (
+                "message" in obj or obj.get("type") in {"summary", "system"}
+            ):
+                score += 0.4
+            best = max(best, min(score, 1.0))
+        return best
 
     def parse(self, raw: str, path: Path | None = None) -> Session:
         messages: list[Message] = []
