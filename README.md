@@ -29,10 +29,11 @@ ctxlens report session.jsonl --html -o report.html
 ctxlens diff before.jsonl after.jsonl
 ```
 
-Point it at a real Claude Code session:
+Point it at a real Claude Code session, or pipe a transcript in:
 
 ```bash
 ctxlens analyze ~/.claude/projects/<slug>/<session>.jsonl
+cat session.json | ctxlens analyze - --json
 ```
 
 ## Example output
