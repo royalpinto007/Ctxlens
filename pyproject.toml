@@ -1,0 +1,58 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ctxlens"
+version = "0.1.0"
+description = "A context-window profiler for AI agents: see exactly what is eating your context, flag waste, and cut tokens."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "royalpinto007", email = "royalpinto007@gmail.com" }]
+keywords = ["llm", "agents", "context-window", "tokens", "profiler", "claude", "openai", "observability"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Debuggers",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "typer>=0.12",
+    "rich>=13.0",
+]
+
+[project.optional-dependencies]
+tiktoken = ["tiktoken>=0.7"]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+]
+
+[project.scripts]
+ctxlens = "ctxlens.cli:app"
+
+[project.urls]
+Homepage = "https://github.com/royalpinto007/ctxlens"
+Repository = "https://github.com/royalpinto007/ctxlens"
+Issues = "https://github.com/royalpinto007/ctxlens/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ctxlens"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B", "C4"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
