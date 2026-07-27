@@ -1,0 +1,42 @@
+{
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "get_weather",
+        "description": "Get the current weather for a location by name or coordinates.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "location": {"type": "string", "description": "City name or lat,lon"},
+            "units": {"type": "string", "enum": ["celsius", "fahrenheit"]}
+          },
+          "required": ["location"]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "search_docs",
+        "description": "Full text search across the internal documentation corpus.",
+        "parameters": {
+          "type": "object",
+          "properties": {"query": {"type": "string"}},
+          "required": ["query"]
+        }
+      }
+    }
+  ],
+  "messages": [
+    {"role": "system", "content": "You are a helpful weather assistant. Always answer with the temperature and a short summary."},
+    {"role": "user", "content": "What's the weather in Paris?"},
+    {"role": "assistant", "content": "", "tool_calls": [{"id": "call_1", "type": "function", "function": {"name": "get_weather", "arguments": "{\"location\": \"Paris\", \"units\": \"celsius\"}"}}]},
+    {"role": "tool", "tool_call_id": "call_1", "name": "get_weather", "content": "{\"location\": \"Paris\", \"temperature_c\": 17, \"conditions\": \"partly cloudy\", \"humidity\": 63, \"wind_kph\": 12}"},
+    {"role": "assistant", "content": "It's 17 degrees Celsius and partly cloudy in Paris right now."},
+    {"role": "user", "content": "And Berlin?"},
+    {"role": "assistant", "content": "", "tool_calls": [{"id": "call_2", "type": "function", "function": {"name": "get_weather", "arguments": "{\"location\": \"Berlin\", \"units\": \"celsius\"}"}}]},
+    {"role": "tool", "tool_call_id": "call_2", "name": "get_weather", "content": "{\"location\": \"Berlin\", \"temperature_c\": 14, \"conditions\": \"overcast\", \"humidity\": 71, \"wind_kph\": 9}"},
+    {"role": "assistant", "content": "Berlin is 14 degrees Celsius and overcast."}
+  ]
+}

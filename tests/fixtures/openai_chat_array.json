@@ -1,0 +1,7 @@
+[
+  {"role": "system", "content": "You are a concise assistant."},
+  {"role": "user", "content": "Summarize the theory of relativity in one sentence."},
+  {"role": "assistant", "content": "Space and time are unified, and gravity is the curvature of that spacetime caused by mass and energy."},
+  {"role": "user", "content": "Thanks!"},
+  {"role": "assistant", "content": "You're welcome."}
+]

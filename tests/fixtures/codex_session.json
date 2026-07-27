@@ -1,0 +1,17 @@
+{
+  "session": {"id": "codex-abc123", "instructions": "You are Codex, an autonomous coding agent operating in a sandbox. Prefer running shell commands to inspect the repo before editing."},
+  "tools": [
+    {"type": "function", "name": "shell", "description": "Run a shell command in the workspace sandbox and return combined stdout/stderr.", "parameters": {"type": "object", "properties": {"command": {"type": "array", "items": {"type": "string"}}}}}
+  ],
+  "items": [
+    {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "List the Python files in the src directory."}]},
+    {"type": "reasoning", "summary": [{"text": "The user wants a directory listing. I'll run ls on src."}]},
+    {"type": "function_call", "name": "shell", "arguments": "{\"command\": [\"ls\", \"src\"]}", "call_id": "c1"},
+    {"type": "function_call_output", "call_id": "c1", "output": "app.py\nconfig.py\nmodels.py\nutils.py\n"},
+    {"type": "message", "role": "assistant", "content": [{"type": "output_text", "text": "The src directory contains app.py, config.py, models.py, and utils.py."}]},
+    {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "How many lines is utils.py?"}]},
+    {"type": "function_call", "name": "shell", "arguments": "{\"command\": [\"wc\", \"-l\", \"src/utils.py\"]}", "call_id": "c2"},
+    {"type": "function_call_output", "call_id": "c2", "output": "128 src/utils.py\n"},
+    {"type": "message", "role": "assistant", "content": [{"type": "output_text", "text": "utils.py has 128 lines."}]}
+  ]
+}
