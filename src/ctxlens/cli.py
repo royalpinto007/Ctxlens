@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Optional
 
 import typer
 from rich.console import Console
@@ -60,7 +59,7 @@ def analyze(
     top: int = typer.Option(10, "--top", help="Number of top consumers to compute."),
     tool_result_cap: int = typer.Option(400, "--tool-result-cap", help="Per tool-result token cap."),
     tool_def_budget: int = typer.Option(800, "--tool-def-budget", help="Tool-definitions token budget."),
-    fail_over: Optional[float] = typer.Option(
+    fail_over: float | None = typer.Option(
         None, "--fail-over-ratio", help="Exit non-zero if waste ratio exceeds this (0-1). CI-friendly."
     ),
 ):
@@ -79,12 +78,12 @@ def analyze(
 def report(
     path: Path = typer.Argument(..., exists=True, readable=True, help="Transcript file to analyze."),
     html: bool = typer.Option(False, "--html", help="Render a self-contained HTML report."),
-    out: Optional[Path] = typer.Option(None, "--out", "-o", help="Write report to this file."),
+    out: Path | None = typer.Option(None, "--out", "-o", help="Write report to this file."),
     fmt: str = typer.Option("auto", "--format", "-f"),
     tokenizer: str = typer.Option("auto", "--tokenizer", "-t"),
     tool_result_cap: int = typer.Option(400, "--tool-result-cap"),
     tool_def_budget: int = typer.Option(800, "--tool-def-budget"),
-    fail_over: Optional[float] = typer.Option(None, "--fail-over-ratio"),
+    fail_over: float | None = typer.Option(None, "--fail-over-ratio"),
 ):
     """Generate an HTML (or JSON) report, to a file or stdout."""
     analysis = _load(path, fmt, tokenizer, 10, tool_result_cap, tool_def_budget)
@@ -148,7 +147,7 @@ def _load(path, fmt, tokenizer, top, tool_result_cap, tool_def_budget):
         raise typer.Exit(EXIT_ERROR) from exc
 
 
-def _maybe_fail(ratio: float, threshold: Optional[float]):
+def _maybe_fail(ratio: float, threshold: float | None):
     if threshold is not None and ratio > threshold:
         err_console.print(
             f"[red]waste ratio {ratio * 100:.1f}% exceeds threshold {threshold * 100:.1f}%[/red]"

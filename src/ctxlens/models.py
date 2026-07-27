@@ -9,10 +9,10 @@ definitions, tool results, user, assistant, thinking).
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 
 
-class Segment(str, Enum):
+class Segment(StrEnum):
     """Category a chunk of context belongs to.
 
     The value is the human-readable label used in reports.

@@ -16,7 +16,6 @@ _SEVERITY_STYLE = {"high": "bold red", "medium": "yellow", "low": "green"}
 def render(analysis: Analysis, console: Console | None = None) -> None:
     console = console or Console()
     p = analysis.profile
-    w = analysis.waste
 
     console.print(_header(analysis))
     console.print(_segment_table(analysis))
