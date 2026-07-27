@@ -58,14 +58,13 @@ def find_duplicates(session: Session, *, min_tokens: int = 20) -> list[Duplicate
     results: list[DuplicateGroup] = []
     seen_bodies: set[str] = set()
 
-    for (kind, key), msgs in groups.items():
+    for (kind, _key), msgs in groups.items():
         if len(msgs) < 2:
             continue
         # avoid double-counting: if a ref group and a body group cover the same
         # messages, keep the ref group (more specific) and skip the body one
-        body_sig = _body_hash(msgs[0].text)
         if kind == "ref":
-            seen_bodies.add(body_sig)
+            seen_bodies.add(_body_hash(msgs[0].text))
 
     for (kind, key), msgs in groups.items():
         if len(msgs) < 2:

@@ -14,10 +14,11 @@ Combines three sources of avoidable tokens:
 
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass, field
 
-from ctxlens.models import Segment, Session
 from ctxlens.analysis.duplication import DuplicateGroup, find_duplicates
+from ctxlens.models import Segment, Session
 
 
 @dataclass
@@ -48,7 +49,11 @@ class WasteReport:
 
     @property
     def waste_ratio(self) -> float:
-        return (self.total_waste / self.total_tokens) if self.total_tokens else 0.0
+        if not self.total_tokens:
+            return 0.0
+        # categories are largely disjoint, but clamp so the ratio is always a
+        # sane fraction even on pathological overlapping inputs
+        return min(1.0, self.total_waste / self.total_tokens)
 
 
 def build_waste_report(
@@ -74,10 +79,17 @@ def build_waste_report(
             )
         )
 
-    # 2. tool-result bloat (tokens above the per-result cap)
+    # 2. tool-result bloat (tokens above the per-result cap). Charge each
+    #    unique body only once so repeated copies are not double-counted here
+    #    and again as duplicate tokens above.
     bloat = 0
+    seen_bloat: set[str] = set()
     for m in session.messages:
         if m.segment == Segment.TOOL_RESULT and m.tokens > tool_result_cap:
+            sig = hashlib.sha1(m.text.strip().encode("utf-8")).hexdigest()
+            if sig in seen_bloat:
+                continue
+            seen_bloat.add(sig)
             over = m.tokens - tool_result_cap
             bloat += over
             items.append(

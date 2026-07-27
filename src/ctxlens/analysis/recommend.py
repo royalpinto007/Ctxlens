@@ -101,7 +101,7 @@ def recommend(profile: Profile, waste: WasteReport) -> list[Recommendation]:
     # 6. single biggest consumer callout
     if profile.top_consumers:
         top = profile.top_consumers[0]
-        if top.tokens >= total * 0.2:
+        if top.tokens >= total * 0.2 and total >= 200:
             recs.append(
                 Recommendation(
                     "medium",
