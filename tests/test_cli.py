@@ -68,4 +68,13 @@ def test_diff_json(openai_array, openai_chat):
 
 def test_analyze_missing_file():
     result = runner.invoke(app, ["analyze", "/no/such/file.jsonl"])
-    assert result.exit_code != 0
+    assert result.exit_code == 1
+
+
+def test_analyze_stdin(openai_array):
+    raw = openai_array.read_text()
+    result = runner.invoke(app, ["analyze", "-", "--json"], input=raw)
+    assert result.exit_code == 0
+    data = json.loads(result.stdout)
+    assert data["source"] == "<stdin>"
+    assert data["total_tokens"] > 0

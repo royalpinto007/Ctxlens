@@ -9,7 +9,7 @@ import typer
 from rich.console import Console
 
 from ctxlens import __version__
-from ctxlens.engine import analyze_file
+from ctxlens.engine import analyze_file, analyze_text
 from ctxlens.parsers import ParseError, available_formats
 from ctxlens.reporters import (
     diff_to_dict,
@@ -52,7 +52,7 @@ def _main(
 
 @app.command()
 def analyze(
-    path: Path = typer.Argument(..., exists=True, readable=True, help="Transcript file to analyze."),
+    path: str = typer.Argument(..., help="Transcript file to analyze, or '-' to read stdin."),
     fmt: str = typer.Option("auto", "--format", "-f", help="Force a parser (auto detects)."),
     tokenizer: str = typer.Option("auto", "--tokenizer", "-t", help="Tokenizer: auto|heuristic|tiktoken."),
     as_json: bool = typer.Option(False, "--json", help="Emit JSON instead of a terminal report."),
@@ -133,16 +133,23 @@ def formats():
 
 
 def _load(path, fmt, tokenizer, top, tool_result_cap, tool_def_budget):
+    forced = None if fmt == "auto" else fmt
+    common = {
+        "fmt": forced,
+        "tokenizer": tokenizer,
+        "top_n": top,
+        "tool_result_cap": tool_result_cap,
+        "tool_def_budget": tool_def_budget,
+    }
     try:
-        return analyze_file(
-            path,
-            fmt=None if fmt == "auto" else fmt,
-            tokenizer=tokenizer,
-            top_n=top,
-            tool_result_cap=tool_result_cap,
-            tool_def_budget=tool_def_budget,
-        )
-    except (ParseError, ImportError, ValueError) as exc:
+        if str(path) == "-":
+            raw = sys.stdin.read()
+            return analyze_text(raw, source="<stdin>", **common)
+        p = Path(path)
+        if not p.is_file():
+            raise ParseError(f"no such file: {path}")
+        return analyze_file(p, **common)
+    except (ParseError, ImportError, ValueError, OSError) as exc:
         err_console.print(f"[red]error:[/red] {exc}")
         raise typer.Exit(EXIT_ERROR) from exc
 
