@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ctxlens-cli"
-version = "0.1.0"
+version = "0.1.1"
 description = "A context-window profiler for AI agents: see exactly what is eating your context, flag waste, and cut tokens."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -37,9 +37,9 @@ dev = [
 ctxlens = "ctxlens.cli:app"
 
 [project.urls]
-Homepage = "https://github.com/AgentPostmortem/ctxlens"
-Repository = "https://github.com/AgentPostmortem/ctxlens"
-Issues = "https://github.com/AgentPostmortem/ctxlens/issues"
+Homepage = "https://github.com/AgentPostmortem/Ctxlens"
+Repository = "https://github.com/AgentPostmortem/Ctxlens"
+Issues = "https://github.com/AgentPostmortem/Ctxlens/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/ctxlens"]
