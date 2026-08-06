@@ -4,7 +4,7 @@
 session transcripts and shows you exactly what is eating your context per turn,
 flags the waste, and tells you what to cut.
 
-[![CI](https://github.com/royalpinto007/ctxlens/actions/workflows/ci.yml/badge.svg)](https://github.com/royalpinto007/ctxlens/actions/workflows/ci.yml)
+[![CI](https://github.com/AgentPostmortem/ctxlens/actions/workflows/ci.yml/badge.svg)](https://github.com/AgentPostmortem/ctxlens/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
@@ -115,7 +115,7 @@ output with `--json`, or diff a baseline against a candidate in CI with
 ## Contributing
 
 ```bash
-git clone https://github.com/royalpinto007/ctxlens
+git clone https://github.com/AgentPostmortem/ctxlens
 cd ctxlens
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"

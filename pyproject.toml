@@ -37,9 +37,9 @@ dev = [
 ctxlens = "ctxlens.cli:app"
 
 [project.urls]
-Homepage = "https://github.com/royalpinto007/ctxlens"
-Repository = "https://github.com/royalpinto007/ctxlens"
-Issues = "https://github.com/royalpinto007/ctxlens/issues"
+Homepage = "https://github.com/AgentPostmortem/ctxlens"
+Repository = "https://github.com/AgentPostmortem/ctxlens"
+Issues = "https://github.com/AgentPostmortem/ctxlens/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/ctxlens"]
