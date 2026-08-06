@@ -20,9 +20,11 @@ deps), and upgrades to exact counts automatically when `tiktoken` is installed.
 
 ## Quickstart
 
+**PyPI:** https://pypi.org/project/ctxlens-cli/
+
 ```bash
-pip install ctxlens-cli          # core
-pip install "ctxlens[tiktoken]"   # optional exact token counts
+pip install ctxlens-cli                # core
+pip install "ctxlens-cli[tiktoken]"    # optional exact token counts
 
 ctxlens analyze session.jsonl
 ctxlens report session.jsonl --html -o report.html
