@@ -63,3 +63,38 @@ def test_tiktoken_requested_but_missing_raises_or_works():
     except ImportError:
         return
     assert tok.count("hello") > 0
+
+
+def test_count_accuracy_claude_tiktoken_is_approximate():
+    from ctxlens.tokenizers import accuracy_note, count_accuracy
+
+    try:
+        tok = get_tokenizer("tiktoken")
+    except ImportError:
+        pytest.skip("tiktoken not installed")
+    assert tok.name == "tiktoken:cl100k_base"
+    assert count_accuracy(tok, "claude-code-jsonl") == "approximate"
+    note = accuracy_note(tok, "claude-code-jsonl")
+    assert note is not None
+    assert "approximate" in note.lower()
+    assert "OpenAI" in note or "cl100k" in note
+
+
+def test_count_accuracy_openai_tiktoken_is_exact():
+    from ctxlens.tokenizers import accuracy_note, count_accuracy
+
+    try:
+        tok = get_tokenizer("tiktoken")
+    except ImportError:
+        pytest.skip("tiktoken not installed")
+    assert count_accuracy(tok, "openai-chat") == "exact"
+    assert count_accuracy(tok, "codex-session") == "exact"
+    assert accuracy_note(tok, "openai-chat") is None
+
+
+def test_heuristic_always_approximate():
+    from ctxlens.tokenizers import count_accuracy
+
+    tok = get_tokenizer("heuristic")
+    assert count_accuracy(tok, "openai-chat") == "approximate"
+    assert count_accuracy(tok, "claude-code-jsonl") == "approximate"

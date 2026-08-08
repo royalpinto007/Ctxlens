@@ -15,6 +15,8 @@ def to_dict(analysis: Analysis) -> dict:
         "source": analysis.source,
         "format": analysis.session.source_format,
         "tokenizer": p.tokenizer_name,
+        "token_accuracy": analysis.token_accuracy,
+        "accuracy_note": analysis.accuracy_note,
         "total_tokens": total,
         "high_water_mark": p.high_water_mark,
         "turns": len(p.turn_stats),

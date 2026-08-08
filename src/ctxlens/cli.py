@@ -144,14 +144,20 @@ def _load(path, fmt, tokenizer, top, tool_result_cap, tool_def_budget):
     try:
         if str(path) == "-":
             raw = sys.stdin.read()
-            return analyze_text(raw, source="<stdin>", **common)
-        p = Path(path)
-        if not p.is_file():
-            raise ParseError(f"no such file: {path}")
-        return analyze_file(p, **common)
+            analysis = analyze_text(raw, source="<stdin>", **common)
+        else:
+            p = Path(path)
+            if not p.is_file():
+                raise ParseError(f"no such file: {path}")
+            analysis = analyze_file(p, **common)
     except (ParseError, ImportError, ValueError, OSError) as exc:
         err_console.print(f"[red]error:[/red] {exc}")
         raise typer.Exit(EXIT_ERROR) from exc
+
+    # Refuse to imply exactness for formats without a matching tokenizer.
+    if analysis.token_accuracy == "approximate" and analysis.accuracy_note:
+        err_console.print(f"[yellow]warning:[/yellow] {analysis.accuracy_note}")
+    return analysis
 
 
 def _maybe_fail(ratio: float, threshold: float | None):
