@@ -78,3 +78,28 @@ def test_analyze_stdin(openai_array):
     data = json.loads(result.stdout)
     assert data["source"] == "<stdin>"
     assert data["total_tokens"] > 0
+
+
+def test_analyze_json_marks_claude_tiktoken_approximate(claude_jsonl):
+    result = runner.invoke(
+        app, ["analyze", str(claude_jsonl), "--tokenizer", "tiktoken", "--json"]
+    )
+    combined = (result.stdout or "") + (result.stderr or "")
+    if result.exit_code != 0 and "not installed" in combined.lower():
+        return
+    assert result.exit_code == 0, combined
+    data = json.loads(result.stdout)
+    assert data["tokenizer"].startswith("tiktoken:")
+    assert data["token_accuracy"] == "approximate"
+    assert data["accuracy_note"]
+    assert "approximate" in data["accuracy_note"].lower()
+
+
+def test_analyze_claude_tiktoken_warns_on_stderr(claude_jsonl):
+    result = runner.invoke(
+        app, ["analyze", str(claude_jsonl), "--tokenizer", "tiktoken", "--json"]
+    )
+    if result.exit_code != 0:
+        return
+    err = result.stderr or ""
+    assert "approximate" in err.lower() or "warning" in err.lower()

@@ -16,7 +16,9 @@ turn, tool schemas re-sent on every step. Token dashboards tell you the bill.
 **ctxlens tells you where the bytes went and what to delete.**
 
 It works offline with a deterministic heuristic tokenizer (no network, no heavy
-deps), and upgrades to exact counts automatically when `tiktoken` is installed.
+deps), and upgrades to OpenAI-exact counts via `tiktoken` when installed. Counts
+for Claude Code sessions remain **approximate** under tiktoken — `cl100k_base` is
+OpenAI's encoding, not Anthropic's.
 
 ## Quickstart
 
@@ -24,7 +26,7 @@ deps), and upgrades to exact counts automatically when `tiktoken` is installed.
 
 ```bash
 pip install ctxlens-cli                # core
-pip install "ctxlens-cli[tiktoken]"    # optional exact token counts
+pip install "ctxlens-cli[tiktoken]"    # optional OpenAI-exact token counts
 
 ctxlens analyze session.jsonl
 ctxlens report session.jsonl --html -o report.html
@@ -110,9 +112,20 @@ output with `--json`, or diff a baseline against a candidate in CI with
 
 ## Tokenizers
 
+Counts are only as accurate as the encoding vs the model that produced the
+session. The report labels each run `exact` or `approximate` (`token_accuracy`
+in JSON) and never claims exactness for Claude sessions under OpenAI encodings.
+
+| Tokenizer | Name shown | OpenAI chat / Codex | Claude Code |
+| --- | --- | --- | --- |
+| `heuristic` | `heuristic` | approximate | approximate |
+| `tiktoken` (default `cl100k_base`) | `tiktoken:cl100k_base` | **exact** (OpenAI BPE) | **approximate** (wrong encoding) |
+
 - `heuristic` (default fallback): deterministic, dependency-free, great for
-  relative profiling and CI.
-- `tiktoken`: exact BPE counts when installed. `--tokenizer auto` prefers it.
+  relative profiling and CI. Always an estimate.
+- `tiktoken`: OpenAI `cl100k_base` BPE when installed. Exact for OpenAI/Codex
+  transcripts; approximate for Claude Code. `--tokenizer auto` prefers it, and
+  the CLI prints a warning when the count is approximate for the session format.
 
 ## Contributing
 

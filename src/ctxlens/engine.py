@@ -14,7 +14,7 @@ from ctxlens.analysis.recommend import Recommendation, recommend
 from ctxlens.analysis.waste import WasteReport, build_waste_report
 from ctxlens.models import Session
 from ctxlens.parsers import parse_file, parse_text
-from ctxlens.tokenizers import get_tokenizer
+from ctxlens.tokenizers import accuracy_note, count_accuracy, get_tokenizer
 
 
 @dataclass
@@ -24,6 +24,10 @@ class Analysis:
     waste: WasteReport
     recommendations: list[Recommendation]
     source: str | None = None
+    #: "exact" only when the tokenizer encoding matches the session's model family
+    token_accuracy: str = "approximate"
+    #: human-readable caveat when counts are not exact; None when exact
+    accuracy_note: str | None = None
 
     @property
     def total_tokens(self) -> int:
@@ -49,12 +53,16 @@ def analyze_session(
         session, tool_result_cap=tool_result_cap, tool_def_budget=tool_def_budget
     )
     recs = recommend(profile, waste)
+    accuracy = count_accuracy(tok, session.source_format)
+    note = accuracy_note(tok, session.source_format)
     return Analysis(
         session=session,
         profile=profile,
         waste=waste,
         recommendations=recs,
         source=source,
+        token_accuracy=accuracy,
+        accuracy_note=note,
     )
 
 

@@ -62,3 +62,11 @@ def test_diff_dict_structure(openai_array, openai_chat):
     d = diff_to_dict(a, b)
     assert d["delta_tokens"] == b.total_tokens - a.total_tokens
     assert d["segments"]
+
+
+def test_json_includes_token_accuracy(claude_jsonl):
+    a = analyze_file(claude_jsonl, tokenizer="heuristic")
+    d = to_dict(a)
+    assert d["token_accuracy"] == "approximate"
+    assert d["tokenizer"] == "heuristic"
+    assert d["accuracy_note"]

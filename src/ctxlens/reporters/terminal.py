@@ -31,16 +31,24 @@ def _header(a: Analysis) -> Panel:
     src = a.source or "<stdin>"
     ratio = a.waste_ratio * 100
     ratio_style = "red" if ratio >= 25 else "yellow" if ratio >= 10 else "green"
-    body = Text.assemble(
+    accuracy = getattr(a, "token_accuracy", "approximate")
+    tok_label = p.tokenizer_name
+    if accuracy == "approximate":
+        tok_label = f"{p.tokenizer_name} (approximate)"
+    parts: list = [
         ("Source   ", "dim"), f"{src}\n",
         ("Format   ", "dim"), f"{a.session.source_format}   ",
-        ("Tokenizer ", "dim"), f"{p.tokenizer_name}\n",
+        ("Tokenizer ", "dim"), f"{tok_label}\n",
         ("Tokens   ", "dim"), f"{p.total_tokens:,}   ",
         ("Turns ", "dim"), f"{len(p.turn_stats)}   ",
         ("High-water ", "dim"), f"{p.high_water_mark:,}\n",
         ("Waste    ", "dim"),
         (f"{a.waste.total_waste:,} tokens ({ratio:.1f}%)", ratio_style),
-    )
+    ]
+    note = getattr(a, "accuracy_note", None)
+    if note:
+        parts.extend(["\n", ("Note     ", "dim"), (note, "yellow")])
+    body = Text.assemble(*parts)
     return Panel(body, title="ctxlens", border_style="cyan", expand=False)
 
 
